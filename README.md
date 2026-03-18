@@ -94,5 +94,3 @@ Tips:
 - **Tap meleset:** sesuaikan koordinat dengan densitas layar, atau tambahkan instruksi jeda (`tunggu 3 detik sblm tap`) agar layar sempat stabil.
 - **Butuh stop cepat:** tekan `Ctrl+C` dua kali; sinyal pertama meminta stop halus setelah aksi berjalan.
 
-## Lisensi
-Belum ada file lisensi. Tambahkan sebelum repo dipublikasikan secara publik.
