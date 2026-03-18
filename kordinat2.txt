@@ -1,0 +1,18 @@
+1. x;920 y;1743 tap 1x
+2. x;502 y;1608 tap 1x
+3. x;511 y;1768 tap 1x
+4. x;177 y;452 tap dlu baru isi email
+5. x;960 y;647 tap 1x ( nah disini untuk solve captcha jadi manual, pokonya setelah tap ini, script langsung polling otp di mailtm, klo uda ada otp baru lanjut ke no 6 , jadi ga harus saya enter)
+6. x;102 y;635 tap dlu baru isi otp
+7. x; 284 y;755 tap 1x
+8. x;103 y;821 tap dlu baru isi kode referral
+9. x;522 y;1018 tap 1x
+10. x;134 y;554 tap dlu baru isi password
+11. x;98 y;697 tap dlu baru retype password
+12. x;523 y;1194 tap 1x
+13. x;507 y;1630 tunggu 6 detik sblm tap
+14. x;927 y;1748 tunggu 10 detik sblm tap
+15. x;48 y;91 tap 1x
+16. x;525 y;1516 tap 1x
+17. x768 y;1670 tap 1x
+back to no 1

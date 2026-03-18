@@ -1,0 +1,20 @@
+1. x:609 y:1429 klik 1 kali
+2. x:323 y:1352 klik 1 kali 
+3. x:333 y:1448 klik 1 kali
+4. x:125 y:424 klik dlu kemudian isi email
+5. x:610 y:595 kli 1 kali, kemudian tunggu saya selesaikan captcha manual + saya klik manual tombol step 7, klo sudah baru saya klik enter di terminal untuk lanjut
+6. x:100 y:587 klik dlu kemudian isi otp yg di terima
+7. manual: setelah captcha solved, saya klik manual (tanpa Enter tambahan)
+8. x:98 y:779 klik dlu baru isi kode referral
+9. x:351 y:950 klik 1 kali
+10. x:108 y:558 klik dlu kemudian isi password yg di tentukan
+11. x:100 y:689 klik dlu 1 kali
+12. x:104 y:592 retype password
+13. x:341 y:974 klik 1 kali
+14. x:339 y:1338 jangan dlu di klik tunggu 5 detik, baru klik 1 kali, setelah klik tunggu 15 detik
+15. x:605 y:1436 klik 1 kali
+16. x:41 y:86 klik 1 kali
+17. sekrol sampe mentol
+18. x:346 y:1216 klik 1 kali
+19 x:501 y:1372 klik 1 kali
+back to no 1
