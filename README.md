@@ -1,29 +1,29 @@
 # topnod
 
-Automation toolkit for repeating Android onboarding flows via `adb` taps while creating disposable mail.tm accounts and auto-reading OTP codes. The coordinates for every tap/scroll/live prompt are described in plain-text scripts (`kordinat2.txt`, etc.), so you can tweak the flow without changing the Python code.
+Toolkit otomasi untuk mengulang flow onboarding Android lewat perintah `adb`, sambil membuat akun mail.tm sekali pakai dan membaca OTP secara otomatis. Semua koordinat tap/scroll/prompt ditulis di file teks biasa seperti `kordinat2.txt`, jadi alur bisa disesuaikan tanpa mengubah kode Python.
 
-## Features
-- Parses coordinate scripts to drive taps, waits, scrolls, and text input over `adb shell input`.
-- Creates throwaway mail.tm inboxes per run, fetches OTP codes automatically, and falls back to manual entry if needed.
-- Stores every successful account (email/password) to both `Mail.txt` (pipe-delimited) and `created_accounts.jsonl` (JSONL).
-- Supports batching multiple accounts (`--count`), dry-runs, configurable delays, and resuming loops (`back to no 1`).
-- Optional `mailtm.py` helper uses `requests` for faster OTP polling; when missing, the built-in client handles HTTP via `urllib`.
+## Fitur
+- Parse skrip koordinat untuk menjalankan tap, jeda, scroll, dan input teks via `adb shell input`.
+- Membuat inbox mail.tm baru di setiap run, menarik OTP otomatis, dan fallback ke input manual jika gagal.
+- Menyimpan akun sukses (email/password) ke `Mail.txt` (dipisah pipa) sekaligus `created_accounts.jsonl` (JSONL).
+- Mendukung batch akun (`--count`), dry-run, pengaturan delay, serta loop otomatis (`back to no 1`).
+- Modul opsional `mailtm.py` memakai `requests` agar polling OTP lebih cepat; jika tidak ada, klien bawaan memakai `urllib`.
 
-## Repository layout
-- `main.py` – primary CLI entry point for parsing coordinate flows, provisioning mail.tm inboxes, and replaying steps on the connected device.
-- `mailtm.py` – lightweight wrapper around the mail.tm REST API, using `requests`; saves results into `Mail.txt`.
-- `kordinat2.txt` – default coordinate flow consumed by `main.py`. Demonstrates taps, waits, OTP prompts, and the loop marker.
-- `koordinat.txt` – alternative/older flow definition kept for reference.
-- `Mail.txt` – append-only log (`email|password`) written by `mailtm.py`.
-- `created_accounts.jsonl` – JSON-lines log written by `main.py` (created at runtime).
+## Struktur repo
+- `main.py` – CLI utama untuk parse flow koordinat, bikin inbox mail.tm, dan replay langkah di device.
+- `mailtm.py` – wrapper ringan REST mail.tm berbasis `requests`, sekaligus tulis log ke `Mail.txt`.
+- `kordinat2.txt` – flow koordinat default yang dipakai `main.py`, lengkap dengan tap, jeda, OTP, dan penanda loop.
+- `koordinat.txt` – versi flow alternatif/legacy untuk referensi.
+- `Mail.txt` – log `email|password` yang diappend oleh `mailtm.py`.
+- `created_accounts.jsonl` – log JSONL yang dibuat runtime oleh `main.py`.
 
-## Requirements
-- Windows 10/11 with Python 3.10+ (tested) and access to `adb`.
-- Android device/emulator connected with USB debugging enabled (or `ADB_SERIAL` exported).
-- Internet access to `https://api.mail.tm`.
-- Optional: `requests` (and `colorama` if you want colored logging) for the standalone `mailtm.py` helper.
+## Kebutuhan sistem
+- Windows 10/11 dengan Python 3.10+ (teruji) dan akses `adb`.
+- Device/emulator Android dengan USB debugging aktif (atau set env `ADB_SERIAL`).
+- Internet ke `https://api.mail.tm`.
+- Opsional: paket `requests` (dan `colorama` bila ingin log berwarna) untuk `mailtm.py`.
 
-Install the Python dependency once:
+Instal dependensi Python sekali saja:
 
 ```powershell
 python -m venv .venv
@@ -31,68 +31,68 @@ python -m venv .venv
 pip install --upgrade pip requests colorama
 ```
 
-Place `adb.exe` in `PATH` or supply `--adb-path`.
+Pastikan `adb.exe` ada di `PATH` atau berikan argumen `--adb-path`.
 
-## Quick start
-1. Connect a single Android device/emulator and ensure it appears in `adb devices`.
-2. Edit `kordinat2.txt` if you need to adjust tap coordinates for your screen size.
-3. Run:
+## Langkah cepat
+1. Sambungkan satu device/emulator Android lalu cek `adb devices`.
+2. Edit `kordinat2.txt` bila perlu menyesuaikan koordinat dengan resolusi layar.
+3. Jalankan:
    ```powershell
    python main.py --flow kordinat2.txt --count 3 --tap-delay 0.15 --text-delay 0.25
    ```
-4. When prompted, enter your referral code (also used as the default password). The script creates mail.tm accounts, fetches OTPs, and replays the taps.
-5. After each account, follow the on-screen instructions to reset the UI if your flow file does not include a loop.
+4. Saat diminta, masukkan kode referral (sekalian dipakai sebagai password). Script akan membuat akun mail.tm, mengambil OTP, lalu mengeksekusi tap.
+5. Setelah setiap akun, ikuti instruksi di terminal untuk reset UI jika flow tidak punya `back to no 1`.
 
-Use `--dry-run` to print every step without touching the device:
+Gunakan `--dry-run` untuk hanya menampilkan langkah tanpa menekan device:
 
 ```powershell
 python main.py --dry-run --flow kordinat2.txt
 ```
 
-## Important CLI options
-- `--count N` – number of accounts to create (default 5).
-- `--serial SERIAL` / `ADB_SERIAL` – target device when more than one is connected.
-- `--flow FILE` – coordinate script to parse (defaults to `kordinat2.txt`).
-- `--otp-regex REGEX` – capture group for OTP extraction (default six digits).
-- `--otp-timeout / --otp-poll` – adjust OTP wait window and poll frequency.
-- `--tap-delay / --text-delay` – wait time after taps/text inputs; combine with `--implicit-delay`.
-- `--scroll-count`, `--scroll-duration-ms`, `--scroll-pause` – tune swipe gestures generated by `scroll` steps.
-- `--enter-timeout` – convert “press Enter to continue” prompts into auto-advance after N seconds.
-- `--no-enter-next` – skip the pause between accounts (only safe when the flow resets itself).
-- `--prefer-mailtm-module` – force usage of `mailtm.py` (requires `requests`).
+## Argumen CLI penting
+- `--count N` – jumlah akun yang dibuat (default 5).
+- `--serial SERIAL` / env `ADB_SERIAL` – pilih device jika lebih dari satu.
+- `--flow FILE` – file skrip koordinat (default `kordinat2.txt`).
+- `--otp-regex REGEX` – pola capture OTP (default enam digit).
+- `--otp-timeout` / `--otp-poll` – atur batas waktu dan interval polling OTP.
+- `--tap-delay` / `--text-delay` – jeda setelah tap/input teks; bisa dikombinasikan dengan `--implicit-delay`.
+- `--scroll-count`, `--scroll-duration-ms`, `--scroll-pause` – tuning gesture swipe untuk step `scroll`.
+- `--enter-timeout` – ubah prompt “tekan Enter” jadi auto lanjut setelah N detik.
+- `--no-enter-next` – hilangkan jeda antar akun (hanya aman jika flow reset sendiri).
+- `--prefer-mailtm-module` – paksa pakai `mailtm.py` (butuh `requests`).
 
-Run `python main.py --help` for the full list.
+Lihat `python main.py --help` untuk daftar lengkap.
 
-## Coordinate flow files
-Each non-empty line is parsed and turned into a `Step`. Recognized patterns:
+## Format skrip koordinat
+Setiap baris non-kosong diparse menjadi `Step`. Beberapa pola yang dikenali:
 
-| Example line | Result |
+| Contoh baris | Hasil |
 | --- | --- |
-| `4. x;177 y;452 tap dlu baru isi email` | Tap at (177,452) and immediately inject the generated email text. |
-| `13. x;507 y;1630 tunggu 6 detik sblm tap` | Wait 6 seconds, tap, then apply the implicit delay. |
-| `sekrol sampe mentol` / `scroll` | Triggers the swipe gesture configured by `--scroll-*`. |
-| `back to no 1` | Marks the loop boundary so the next account starts automatically. |
-| `isi otp`, `kode referral`, `isi password`, `retype password` | Adds `text_*` steps after the tap so inputs occur in the correct fields. |
+| `4. x;177 y;452 tap dlu baru isi email` | Tap di (177,452) lalu otomatis isi email yang digenerate. |
+| `13. x;507 y;1630 tunggu 6 detik sblm tap` | Tunggu 6 detik, tap, kemudian apply implicit delay. |
+| `sekrol sampe mentol` / `scroll` | Memicu swipe sesuai parameter `--scroll-*`. |
+| `back to no 1` | Menandai loop, jadi akun berikutnya langsung mulai. |
+| `isi otp`, `kode referral`, `isi password`, `retype password` | Menambah step `text_*` supaya input diarahkan ke field yang benar. |
 
 Tips:
-- Keep coordinates consistent with the connected device’s resolution; use `adb shell getevent`/`adb shell uiautomator dump` to discover new points.
-- For screens where CAPTCHA handling is manual, leave comments such as step 5 in `kordinat2.txt`. The runner pauses OTP input until the automation resumes.
-- If your flow needs a manual adjustment between accounts, omit `back to no 1`; the script will prompt you to realign the UI.
+- Pastikan koordinat cocok dengan resolusi device; gunakan `adb shell getevent` atau `adb shell uiautomator dump` saat mengambil titik baru.
+- Untuk area CAPTCHA manual, tinggalkan catatan seperti langkah 5 di `kordinat2.txt`; runner akan jeda OTP sampai lanjut lagi.
+- Jika butuh penyesuaian manual antar akun, hapus `back to no 1`; script akan meminta Enter sebelum lanjut.
 
-## OTP and account handling
-- When `mailtm.py` is available (and `--prefer-mailtm-module` is not disabled), it creates a random mailbox, saves it to `Mail.txt`, logs in, and spawns a background thread (`start_otp_prefetch`) that waits for OTP codes using `requests`.
-- Without `mailtm.py`, `main.py` falls back to the built-in `MailTm` client that speaks directly to `https://api.mail.tm` via `urllib`.
-- If OTP fetching fails or times out, the script asks you to paste the code manually.
-- Successful runs append a JSON record to `created_accounts.jsonl`:
+## OTP & pencatatan akun
+- Jika `mailtm.py` tersedia (atau diaktifkan via `--prefer-mailtm-module`), modul tersebut membuat mailbox random, login, dan menjalankan thread `start_otp_prefetch` berbasis `requests`.
+- Tanpa `mailtm.py`, `main.py` memakai kelas `MailTm` bawaan yang langsung hit API `https://api.mail.tm` via `urllib`.
+- Jika OTP gagal terbaca, pengguna akan diminta memasukkan kode secara manual.
+- Akun sukses ditulis ke `created_accounts.jsonl`, misalnya:
   ```json
   {"created_at":"2026-03-17T16:40:52+0700","serial":"emulator-5554","email":"uabc123@domain","password":"refcode"}
   ```
 
 ## Troubleshooting
-- **Multiple devices listed:** set `ADB_SERIAL=emulator-5554` or pass `--serial`.
-- **Stuck waiting for OTP:** verify mail.tm availability, consider raising `--otp-timeout`, or inspect `Mail.txt` to ensure accounts are created.
-- **Coordinates miss the target:** adjust the script for your display density, or add waits (`tunggu 3 detik sblm tap`) to give screens time to settle.
-- **Need to abort quickly:** press `Ctrl+C` twice; the first signal flags a graceful stop after the current action.
+- **Device lebih dari satu:** set `ADB_SERIAL=emulator-5554` atau gunakan `--serial`.
+- **OTP lama muncul:** cek status mail.tm, naikkan `--otp-timeout`, atau lihat `Mail.txt` apakah akun benar-benar dibuat.
+- **Tap meleset:** sesuaikan koordinat dengan densitas layar, atau tambahkan instruksi jeda (`tunggu 3 detik sblm tap`) agar layar sempat stabil.
+- **Butuh stop cepat:** tekan `Ctrl+C` dua kali; sinyal pertama meminta stop halus setelah aksi berjalan.
 
-## License
-No license file is provided yet. Add one if you plan to publish this repository publicly.
+## Lisensi
+Belum ada file lisensi. Tambahkan sebelum repo dipublikasikan secara publik.
